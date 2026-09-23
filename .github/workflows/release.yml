@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+
+  # ------------------------------
+  # Version
+  # ------------------------------
+
+  version:
+    name: Compute Version
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/version.yml@main
+
+  # ------------------------------
+  # Build
+  # ------------------------------
+
+  build:
+    name: Build
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/unity-build.yml@main
+    with:
+      targetPlatform: StandaloneWindows64
+      buildName: UnityProject
+      retentionDays: 7
+    secrets: inherit
+
+  # ------------------------------
+  # Devlog
+  # ------------------------------
+
+  devlog:
+    name: Devlog
+
+    needs:
+      - version
+
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/devlog.yml@main
+
+    with:
+      outputFile: release-notes.md
+      previousTag: ${{ needs.version.outputs.previousTag }}
+      nextTag: ${{ needs.version.outputs.nextTag }}
+
+  # ------------------------------
+  # Release
+  # ------------------------------
+
+  release:
+    name: Release
+
+    needs:
+      - version
+      - build
+      - devlog
+
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/release.yml@main
+
+    with:
+      artifactName: StandaloneWindows64-Build
+      nextTag: ${{ needs.version.outputs.nextTag }}
+
+    secrets: inherit
