@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/unity-build.yml@main
+    with:
+      targetPlatform: StandaloneWindows64
+      buildName: UnityProject
+      retentionDays: 7
+    secrets: inherit
+
+  devlog:
+    name: Devlog
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/devlog.yml@main
+    with:
+      outputFile: release-notes.md
+
+  release:
+    name: Release
+
+    needs:
+      - build
+      - devlog
+
+    uses: Matcodeew-Projects/Git-workflows/.github/workflows/release.yml@main
+
+    with:
+      artifactName: StandaloneWindows64-Build
+
+    secrets: inherit

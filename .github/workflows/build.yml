@@ -1,0 +1,17 @@
+name: Unity Build
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: Matcodeew-Projects/Git-Workflows/.github/workflows/unity-build.yml@main
+    with:
+      targetPlatform: StandaloneWindows64
+      buildName: UnityProject
+      retentionDays: 7
+    secrets: inherit

@@ -1,0 +1,24 @@
+name: Unity Tests
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  editmode:
+    name: EditMode Tests
+    uses: Matcodeew-Projects/Git-Workflows/.github/workflows/unity-editmode-tests.yml@main
+    with:
+      unityVersion: 6000.3.11f1
+    secrets: inherit
+
+jobs:
+  playmode:
+    uses: Matcodeew-Projects/Git-Workflows/.github/workflows/unity-playmode-tests.yml@main
+    with:
+      unityVersion: 6000.3.11f1
+    secrets: inherit
